@@ -13,6 +13,10 @@
         --font-heading: 'Bebas Neue', sans-serif;
         --font-body: 'Poppins', sans-serif;
         --product-card-height-mobile: 275px;
+        --tracking-custom-wide: 0.48px;
+      }
+      :is(h1, h2, h3, h4, h5, h6){
+        letter-spacing: var(--tracking-custom-wide);
       }
       :is(p, span, button){
         font-family: var(--font-body);
@@ -33,9 +37,8 @@
     <main class="">
         <div class="collections--container px-6">
             <h2 class="font-serif max-sm:text-center max-sm:py-5 max-sm:text-3xl font-bold">Best Sellers</h2>
-        <div class="product-card--wrapper  grid 
-        max-sm:grid-cols-2 max-sm:gap-3 max-sm:h-[calc(var(--product-card-height-mobile)*2-1rem)] overflow-hidden" data-expanded="false">
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+        <div class="product-card--wrapper grid max-sm:grid-cols-2 max-sm:grid-rows-auto max-sm:gap-3 overflow-hidden" data-expanded="false">
+            <div class="product-card max-sm:h-fit flex flex-col ">
                 <picture class="w-full object-cover aspect-square">
                 <source type="image/webp"
                     srcset="
@@ -48,9 +51,9 @@
                     srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high"
                     decoding="async" width="" height="">
                 </picture>
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -59,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -75,9 +78,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture>
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -86,7 +89,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -102,9 +105,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture>
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -113,7 +116,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -129,9 +132,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture class="w-full h-auto aspect-square object-cover ">
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -140,7 +143,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -156,9 +159,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture class="w-full h-auto aspect-square object-cover ">
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -167,7 +170,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -183,9 +186,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture class="w-full h-auto aspect-square object-cover ">
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -194,7 +197,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -210,9 +213,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture class="w-full h-auto aspect-square object-cover ">
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -221,7 +224,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -237,9 +240,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture class="w-full h-auto aspect-square object-cover ">
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -248,7 +251,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -264,9 +267,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture class="w-full h-auto aspect-square object-cover ">
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -275,7 +278,7 @@
                     </div>
                 </div>
             </div>
-            <div class="product-card flex flex-col max-sm:h-product-card-height-mobile ">
+            <div class="product-card max-sm:h-full flex flex-col ">
                 <picture class="w-full h-auto object-cover aspect-square">
                     <source type="image/webp" srcset="
             https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -291,9 +294,9 @@
            " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
                     width="" height="">
                 </picture class="w-full h-auto aspect-square object-cover ">
-                <div class="product-content flex-1 h-1/4 flex flex-col gap-2 mt-3">
+                <div class="product-content flex-1 h-1/4 flex flex-col  mt-3">
                     <h4 class="product-title font-heading text-lg">Lorem Ipsum</h4>
-                    <div class="ratings-wrapper">
+                    <div class="ratings-wrapper ">
                         <span class="stars-wrapper text-xs">★★★★★</span>
                         <span class="text-xs">1,234 Reviews</span>
                     </div>
@@ -304,7 +307,7 @@
             </div>
         </div>
         <div class="expand-button w-full mt-5">
-            <button class="mx-auto p-4 border border-black bg-black font-font-body text-white rounded-full w-full text-center">Show More</button>
+            <button class="mx-auto p-4 border border-black bg-black tracking-[var(--tracking-custom-wide)] text-white rounded-full w-full text-center">Show More</button>
         </div>
         </div>
     </main>
