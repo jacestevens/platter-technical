@@ -10,11 +10,21 @@
     <!-- Custom JS -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
-
             let expandButton = document.querySelector('.expand-button');
             let cardContainer = document.querySelector('.product-card--wrapper');
 
+            if (!expandButton || !cardContainer) return;
+
+            const syncCollapsedCardAccessibility = (isExpanded) => {
+                const cards = cardContainer.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    const isCollapsible = index >= 4;
+                    if (!isCollapsible) return;
+
+                    const shouldHide = !isExpanded;
+                    card.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
+                });
+            };
 
             const checkContainerHeight = () => {
                 let scrollHeight = cardContainer.scrollHeight;
@@ -22,19 +32,28 @@
                     scrollHeight = cardContainer.scrollHeight;
                     cardContainer.style.setProperty('--expanded-height', scrollHeight + 'px');
                 });
-
-
-            }
+            };
             checkContainerHeight();
 
-
+            const setExpandedState = (expanded) => {
+                cardContainer.dataset.expanded = expanded ? 'true' : 'false';
+                expandButton.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                expandButton.textContent = expanded ? 'Show Less' : 'Show More';
+                syncCollapsedCardAccessibility(expanded);
+            };
 
             const expandSection = () => {
-                cardContainer.dataset.expanded = cardContainer.dataset.expanded === 'true' ? 'false' : 'true';
-            }
+                const expanded = cardContainer.dataset.expanded !== 'true';
+                setExpandedState(expanded);
+            };
 
             expandButton.addEventListener('click', expandSection);
 
+            if (!cardContainer.id) {
+                cardContainer.id = 'best-sellers';
+            }
+            expandButton.setAttribute('aria-controls', cardContainer.id);
+            setExpandedState(cardContainer.dataset.expanded === 'true');
         });
     </script>
     <style type="text/tailwindcss">
@@ -46,6 +65,7 @@
         --tracking-custom-wide: 0.48px;
         --color-subdued: #707070;
         --container-sm: 19.5ch;
+        --breakpoint-sm: 640px;
       }
       :is(h1, h2, h3, h4, h5, h6){
         letter-spacing: var(--tracking-custom-wide);
@@ -75,10 +95,38 @@
             clip-path: inset(0 0 0 0);
             transition: clip-path 0.2s ease-in-out;
         }
-        .product-card--wrapper:hover{
-            
-        }
+      }
 
+      .skip-link{
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translateY(-120%);
+        background: #000;
+        color: #fff;
+        padding: 12px 16px;
+        z-index: 9999;
+      }
+      .skip-link:focus{
+        transform: translateY(0);
+      }
+
+      :is(a, button, [tabindex]):focus-visible{
+        outline: 3px solid #000;
+        outline-offset: 3px;
+        border-radius: 8px;
+      }
+
+      @media (prefers-reduced-motion: reduce){
+        *{
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+        .secondary-image{
+          clip-path: none;
+        }
       }
       .stars-mask{
         --size: 10px;
@@ -111,7 +159,7 @@
         width: calc((var(--rating) / var(--max)) * 100%);
         background: var(--fill);
     }
-    @media screen and (width < 768px){
+    @media screen and (width < 640px){
         .product-card--wrapper .product-card{
         grid-template-rows: auto;
         transition: max-height 0.3s ease-in-out ;
@@ -153,7 +201,7 @@
     }
 
     /* Scrollbar */
-    @media screen and (width >= 768px){
+    @media screen and (width >= 640px){
     
         .product-card--wrapper::-webkit-scrollbar{
         width:6px;
@@ -182,6 +230,15 @@
         cursor:pointer;
         }
     }
+    .expand-button{
+        transition: all 0.2s ease-in-out;
+    }
+    .expand-button:hover{
+        border: 2px solid #000;
+        background-color: #fff;
+        color: #000;
+        transition: all 0.2s ease-in-out;
+    }
       
     </style>
     <!-- End Tailwind CSS -->
@@ -197,7 +254,8 @@
 </head>
 
 <body>
-    <main class="main">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <main id="main-content" class="main">
         <div class="collections--container max-sm:px-6 max-sm:py-9 sm:py-[80px]  mx-auto overflow-hidden">
             <div class="collections--wrapper sm:overflow-visible relative sm:px-10">
                 <h2 class="font-serif sm:pb-[38px] sm:text-[40px]  max-sm:text-center max-sm:pb-5 max-sm:text-3xl font-bold">Best Sellers</h2>
@@ -208,8 +266,8 @@
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%]  w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                        class="product-image--wrapper relative pt-[100%]  w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/c-d-x-PDX_a_82obo-unsplash.jpg?v=1767032462&width=500 500w,
@@ -218,10 +276,10 @@
                                 sizes="(min-width: 768px) 100vw, 0px">
                             <img class="h-full w-full object-cover"
                                 src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/c-d-x-PDX_a_82obo-unsplash.jpg?v=1767032462&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="Outside Vibes T-Shirt Sunshine" loading="eager"
                                 fetchpriority="high" decoding="async" width="" height="">
                         </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
@@ -230,7 +288,7 @@
                                 sizes="(min-width: 768px) 100vw, 0px">
                             <img class="h-full w-full object-cover"
                                 src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="" loading="lazy"
                                 fetchpriority="high" decoding="async" width="" height="">
                         </picture>
                     </div>
@@ -238,8 +296,8 @@
                         <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Outside Vibes T-Shirt
                             Sunshine</h4>
                         <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:4.4; --max:5"
-                                aria-label="Rated 4.2 out of 5"></span>
+                            <span class="stars-mask" style="--rating:4.4; --max:5" role="img"
+                                aria-label="Rated 4.4 out of 5"></span>
                             <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
                         </div>
                         <div class="price">
@@ -253,8 +311,8 @@
                         <span class="badge badge-sale py-1 border border-black bg-[#5C7962] text-white rounded-full px-2 font-heading">Save 15%</span>
                     </div>
                     <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                        class="product-image--wrapper relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/pmv-chamara-MEsWk-dZzlI-unsplash.jpg?v=1767032461&width=500 500w,
@@ -263,10 +321,10 @@
                                 sizes="(min-width: 768px) 100vw, 0px">
                             <img class="h-full w-full object-cover"
                                 src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/pmv-chamara-MEsWk-dZzlI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="Hike Bottle Outside Vibes" loading="eager"
                                 fetchpriority="high" decoding="async" width="" height="">
                         </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
@@ -275,7 +333,7 @@
                                 sizes="(min-width: 768px) 100vw, 0px">
                             <img class="h-full w-full object-cover"
                                 src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="" loading="lazy"
                                 fetchpriority="high" decoding="async" width="" height="">
                         </picture>
                     </div>
@@ -283,7 +341,7 @@
                         <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Hike Bottle Outside Vibes
                         </h4>
                         <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
+                            <span class="stars-mask" style="--rating:5; --max:5" role="img" aria-label="Rated 5 out of 5"></span>
                             <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
                         </div>
                         <div class="price">
@@ -296,9 +354,9 @@
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading">Best Seller</span>
                     </div>
                     <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        class="product-image--wrapper relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
 
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
                             <source type="image/webp" srcset="
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/imani-bahati-LxVxPA1LOVM-unsplash.jpg?v=1767032462&width=500 500w,
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/imani-bahati-LxVxPA1LOVM-unsplash.jpg?v=1767032462&width=1000 1000w,
@@ -310,10 +368,10 @@
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/imani-bahati-LxVxPA1LOVM-unsplash.jpg?v=1767032462&width=500 500w,
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/imani-bahati-LxVxPA1LOVM-unsplash.jpg?v=1767032462&width=1000 1000w,
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/imani-bahati-LxVxPA1LOVM-unsplash.jpg?v=1767032462&width=1500 1500w,
-               " sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high" decoding="async"
+               " sizes="(min-width: 768px) 100vw, 0px" alt="Rest in Nature T-Shirt Charcoal" loading="eager" fetchpriority="high" decoding="async"
                                 width="" height="">
                         </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
                             <source type="image/webp" srcset="
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
@@ -325,7 +383,7 @@
                 https://cdn.shopify.com/product-images/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
                 https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w,"
-                                sizes="(min-width: 768px) 100vw, 0px" alt="" loading="eager" fetchpriority="high"
+                                sizes="(min-width: 768px) 100vw, 0px" alt="" loading="lazy" fetchpriority="high"
                                 decoding="async" width="" height="">
                         </picture>
                     </div>
@@ -333,7 +391,7 @@
                         <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Rest in Nature T-Shirt
                             Charcoal</h4>
                         <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
+                            <span class="stars-mask" style="--rating:5; --max:5" role="img" aria-label="Rated 5 out of 5"></span>
                             <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
                         </div>
                         <div class="price">
@@ -346,8 +404,8 @@
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                        class="product-image--wrapper relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -356,10 +414,10 @@
                                 sizes="(min-width: 768px) 100vw, 0px">
                             <img class="h-full w-full object-cover"
                                 src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="Outside Vibes Cap Forest Green" loading="eager"
                                 fetchpriority="high" decoding="async" width="" height="">
                         </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
@@ -368,13 +426,99 @@
                                 sizes="(min-width: 768px) 100vw, 0px">
                             <img class="h-full w-full object-cover"
                                 src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="" loading="lazy"
                                 fetchpriority="high" decoding="async" width="" height="">
                         </picture>
                     </div>
                     <div class="product-content flex-1 h-full gap-2 flex flex-col">
                         <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Outside Vibes Cap Forest
                             Green</h4>
+                        <div class="ratings-wrapper ">
+                            <span class="stars-mask" style="--rating:5; --max:5" role="img" aria-label="Rated 5 out of 5"></span>
+                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
+                        </div>
+                        <div class="price">
+                            <span>$100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
+                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
+                    </div>
+                    <div
+                        class="product-image--wrapper relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="Outside Vibes T-Shirt Sunshine" loading="eager"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="lazy"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                    </div>
+                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
+                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Outside Vibes T-Shirt
+                            Sunshine</h4>
+                        <div class="ratings-wrapper ">
+                            <span class="stars-mask" style="--rating:5; --max:5" role="img" aria-label="Rated 5 out of 5"></span>
+                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
+                        </div>
+                        <div class="price">
+                            <span>$100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
+                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
+                    </div>
+                    <div
+                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="Outside Vibes T-Shirt Sunshine" loading="eager"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="lazy"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                    </div>
+                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
+                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Outside Vibes T-Shirt
+                            Sunshine</h4>
                         <div class="ratings-wrapper ">
                             <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
                             <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
@@ -390,7 +534,7 @@
                     </div>
                     <div
                         class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
@@ -402,7 +546,136 @@
                                 srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
                                 fetchpriority="high" decoding="async" width="" height="">
                         </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="lazy"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                    </div>
+                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
+                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Outside Vibes T-Shirt
+                            Sunshine</h4>
+                        <div class="ratings-wrapper ">
+                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
+                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
+                        </div>
+                        <div class="price">
+                            <span>$100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
+                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
+                    </div>
+                    <div
+                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="lazy"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                    </div>
+                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
+                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Outside Vibes T-Shirt
+                            Sunshine</h4>
+                        <div class="ratings-wrapper ">
+                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
+                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
+                        </div>
+                        <div class="price">
+                            <span>$100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
+                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
+                    </div>
+                    <div
+                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="lazy"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                    </div>
+                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
+                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Outside Vibes T-Shirt
+                            Sunshine</h4>
+                        <div class="ratings-wrapper ">
+                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
+                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
+                        </div>
+                        <div class="price">
+                            <span>$100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
+                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
+                    </div>
+                    <div
+                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
+                        <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+                            <source type="image/webp"
+                                srcset="
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
+                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
+                                sizes="(min-width: 768px) 100vw, 0px">
+                            <img class="h-full w-full object-cover"
+                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
+                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
+                                fetchpriority="high" decoding="async" width="" height="">
+                        </picture>
+                        <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
                             <source type="image/webp"
                                 srcset="
                         https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
@@ -427,220 +700,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
-                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
-                    </div>
-                    <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                    </div>
-                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
-                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Lorem Ipsum</h4>
-                        <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
-                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
-                        </div>
-                        <div class="price">
-                            <span>$100</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
-                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
-                    </div>
-                    <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                    </div>
-                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
-                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Lorem Ipsum</h4>
-                        <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
-                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
-                        </div>
-                        <div class="price">
-                            <span>$100</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
-                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
-                    </div>
-                    <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                    </div>
-                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
-                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Lorem Ipsum</h4>
-                        <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
-                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
-                        </div>
-                        <div class="price">
-                            <span>$100</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
-                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
-                    </div>
-                    <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                    </div>
-                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
-                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Lorem Ipsum</h4>
-                        <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
-                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
-                        </div>
-                        <div class="price">
-                            <span>$100</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
-                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
-                    </div>
-                    <div
-                        class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
-                        <picture class="absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/rachit-tank-2cFZ_FB08UM-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                        <picture class="secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
-                            <source type="image/webp"
-                                srcset="
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=500 500w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000 1000w,
-                        https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1500 1500w"
-                                sizes="(min-width: 768px) 100vw, 0px">
-                            <img class="h-full w-full object-cover"
-                                src="https://cdn.shopify.com/s/files/1/0970/7415/1742/files/ryan-waring-164_6wVEHfI-unsplash.jpg?v=1767032461&width=1000"
-                                srcset="" sizes="(min-width: 768px) 100vw, 0px" alt="product-image" loading="eager"
-                                fetchpriority="high" decoding="async" width="" height="">
-                        </picture>
-                    </div>
-                    <div class="product-content flex-1 h-full gap-2 flex flex-col">
-                        <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">Lorem Ipsum</h4>
-                        <div class="ratings-wrapper ">
-                            <span class="stars-mask" style="--rating:5; --max:5" aria-label="Rated 5 out of 5"></span>
-                            <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
-                        </div>
-                        <div class="price">
-                            <span>$100</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="expand-button--container sm:hidden w-full mt-5">
                 <button
-                    class="expand-button mx-auto cursor-pointer p-4 border border-black bg-black tracking-[var(--tracking-custom-wide)] text-white rounded-full w-full text-center">Show
+                    type="button" aria-expanded="false"
+                    class="expand-button mx-auto cursor-pointer p-4 border-2 border-black bg-black tracking-[var(--tracking-custom-wide)] text-white rounded-full w-full text-center">Show
                     More</button>
             </div>
             </div>
