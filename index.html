@@ -75,6 +75,9 @@
             clip-path: inset(0 0 0 0);
             transition: clip-path 0.2s ease-in-out;
         }
+        .product-card--wrapper:hover{
+            
+        }
 
       }
       .stars-mask{
@@ -148,6 +151,37 @@
         }
     }
     }
+
+    /* Scrollbar */
+    @media screen and (width >= 768px){
+    
+        .product-card--wrapper::-webkit-scrollbar{
+        width:6px;
+        height:6px;
+        margin-left: 10px;
+        }
+
+        .product-card--wrapper::-webkit-scrollbar-thumb{
+        background:#000;
+        border-radius:100vh;
+        border:1px solid transparent;
+        background-clip:padding-box;
+        transition:border-width .2s ease;
+        }
+
+        .product-card--wrapper:hover::-webkit-scrollbar-thumb,
+        .product-card--wrapper:active::-webkit-scrollbar-thumb,
+        .product-card--wrapper:focus-within::-webkit-scrollbar-thumb{
+        border-width:0;
+        }
+        .product-card--wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .product-card--wrapper::-webkit-scrollbar-thumb:hover{
+        cursor:pointer;
+        }
+    }
       
     </style>
     <!-- End Tailwind CSS -->
@@ -164,12 +198,13 @@
 
 <body>
     <main class="main">
-        <div class="collections--container max-sm:px-6 max-sm:py-9">
-            <h2 class="font-serif max-sm:text-center max-sm:pb-5 max-sm:text-3xl font-bold">Best Sellers</h2>
-            <div class="product-card--wrapper grid max-sm:grid-cols-2 max-sm:gap-x-3  max-sm:grid-rows-auto  overflow-hidden"
+        <div class="collections--container max-sm:px-6 max-sm:py-9 sm:py-[80px]  mx-auto overflow-hidden">
+            <div class="collections--wrapper sm:overflow-visible relative sm:px-10">
+                <h2 class="font-serif sm:pb-[38px] sm:text-[40px]  max-sm:text-center max-sm:pb-5 max-sm:text-3xl font-bold">Best Sellers</h2>
+            <div class="product-card--wrapper scroll-pl-10 scroll-pr-10 -ml-10 pl-10  w-screen snap-x mx-10 scroll-smooth sm:overflow-x-scroll  grid sm:gap-x-6 sm:pb-12 sm:grid-flow-col max-sm:grid-cols-2 max-sm:gap-x-3  max-sm:grid-rows-auto  "
                 data-expanded="false" style="--expanded-height:0">
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1  sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -212,10 +247,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 px-2 top-2 text-[8px] uppercase w-full flex justify-between">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 px-2 top-2 sm:text-sm max-sm:text-[8px] uppercase w-full flex justify-between">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
-                        <span class="badge badge-sale py-1 border border-black bg-[#5C7962] text-white rounded-full px-2 font-heading font-medium">Save 15%</span>
+                        <span class="badge badge-sale py-1 border border-black bg-[#5C7962] text-white rounded-full px-2 font-heading">Save 15%</span>
                     </div>
                     <div
                         class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
@@ -252,13 +287,13 @@
                             <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
                         </div>
                         <div class="price">
-                            <span class="flex gap-2 items-center"><s class="text-black">$100</s>$80</span>
+                            <span class="flex gap-2 items-center"><s class="text-black text-base opacity-50">$100</s>$80</span>
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
-                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase ">
+                        <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading">Best Seller</span>
                     </div>
                     <div
                         class="product-image--wrapper hover:cursor-pointer relative pt-[100%] w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden">
@@ -306,8 +341,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -349,8 +384,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -392,8 +427,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -434,8 +469,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -476,8 +511,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -518,8 +553,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -560,8 +595,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="product-card @container grid grid-rows-2 relative max-sm:h-full">
-                    <div class="badges-container absolute z-2 left-2 top-2 text-[8px] uppercase bold">
+                <div class="product-card snap-start sm:min-w-[350px]  sm:grid-rows-1 sm:overflow-y-hidden sm:h-[450px] @container grid grid-rows-2 relative max-sm:h-full">
+                    <div class="badges-container absolute z-2 left-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
                         <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">Best Seller</span>
                     </div>
                     <div
@@ -603,10 +638,11 @@
                     </div>
                 </div>
             </div>
-            <div class="expand-button--container w-full mt-5">
+            <div class="expand-button--container sm:hidden w-full mt-5">
                 <button
                     class="expand-button mx-auto cursor-pointer p-4 border border-black bg-black tracking-[var(--tracking-custom-wide)] text-white rounded-full w-full text-center">Show
                     More</button>
+            </div>
             </div>
         </div>
     </main>
