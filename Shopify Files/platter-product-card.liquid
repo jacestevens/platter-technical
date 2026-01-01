@@ -45,7 +45,7 @@
         src="{{ product.featured_image | image_url: width: 1500 }}"
         srcset=""
         sizes="(min-width: 768px) 100vw, 0px"
-        alt="Outside Vibes T-Shirt Sunshine"
+        alt="{{ product.featured_image.alt }}"
         loading="eager"
         fetchpriority="high"
         decoding="async"
@@ -65,10 +65,10 @@
       >
       <img
         class="h-full w-full object-cover"
-        src="{{ product.featured_image | image_url: width: 1000 }}"
+        src="{{ product.media[1] | image_url: width: 1500 }}"
         srcset=""
         sizes="(min-width: 768px) 100vw, 0px"
-        alt=""
+        alt="{{ product.media[1].alt }}"
         loading="lazy"
         fetchpriority="high"
         decoding="async"
