@@ -1,0 +1,182 @@
+:is(h1, h2, h3, h4, h5, h6){
+        letter-spacing: var(--tracking-custom-wide);
+      }
+      :is(p, span, button){
+        font-family: var(--font-body);
+      }
+      .badge{
+        font-family: var(--font-heading);
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: 0.32px;
+      }
+      .ratings-wrapper{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .secondary-image{
+        clip-path: inset(0 100% 0 0);
+        transition: clip-path 0.2s ease-in-out;
+      }
+      @media (hover: hover) {
+        .product-image--wrapper:hover .secondary-image{
+            clip-path: inset(0 0 0 0);
+            transition: clip-path 0.2s ease-in-out;
+        }
+      }
+
+      .skip-link{
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translateY(-120%);
+        background: #000;
+        color: #fff;
+        padding: 12px 16px;
+        z-index: 9999;
+      }
+      .skip-link:focus{
+        transform: translateY(0);
+      }
+
+      :is(a, button, [tabindex]):focus-visible{
+        outline: 3px solid #000;
+        outline-offset: 3px;
+        border-radius: 8px;
+      }
+
+      @media (prefers-reduced-motion: reduce){
+        *{
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+        .secondary-image{
+          clip-path: none;
+        }
+      }
+      .stars-mask{
+        --size: 10px;
+        --gap: 2px;
+
+        --base: #d7d7d7;
+        --fill: #000;
+
+        --star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='10' viewBox='0 0 11 10' fill='none'%3E%3Cpath d='M5.53568 0.0730128C5.33151 -0.0243376 5.0943 -0.0243376 4.89012 0.0730128C4.71361 0.15717 4.6163 0.303289 4.56722 0.38345C4.51648 0.466319 4.4644 0.571883 4.41364 0.674777L3.33577 2.85842L0.924746 3.21082C0.81125 3.22739 0.694796 3.24439 0.600339 3.2671C0.508958 3.28908 0.340003 3.3366 0.205548 3.47852C0.0500022 3.6427 -0.0231489 3.86831 0.0064613 4.09253C0.0320567 4.28635 0.140979 4.42397 0.202079 4.49538C0.265238 4.5692 0.349563 4.6513 0.431745 4.73132L2.17564 6.42987L1.76416 8.82901C1.74473 8.94213 1.72481 9.05818 1.71714 9.15506C1.70972 9.24877 1.70254 9.42422 1.79589 9.59608C1.90387 9.79487 2.09581 9.93431 2.31824 9.97554C2.51055 10.0112 2.67519 9.95013 2.76201 9.91411C2.85178 9.87686 2.95599 9.82203 3.05757 9.76858L5.2129 8.63511L7.36824 9.76859C7.46982 9.82203 7.57403 9.87686 7.6638 9.91411C7.75062 9.95013 7.91526 10.0112 8.10756 9.97554C8.33 9.93431 8.52194 9.79487 8.62991 9.59608C8.72326 9.42422 8.71609 9.24877 8.70867 9.15506C8.701 9.05818 8.68107 8.94214 8.66165 8.82903L8.25016 6.42987L9.99408 4.7313C10.0763 4.65129 10.1606 4.5692 10.2237 4.49538C10.2848 4.42397 10.3937 4.28635 10.4193 4.09253C10.449 3.86831 10.3758 3.6427 10.2203 3.47852C10.0858 3.3366 9.91685 3.28908 9.82547 3.2671C9.73101 3.24439 9.61455 3.22739 9.50106 3.21082L7.09003 2.85842L6.01219 0.674815C5.96142 0.571914 5.90933 0.466325 5.85859 0.38345C5.80951 0.303289 5.71219 0.15717 5.53568 0.0730128Z' fill='%23231F20'/%3E%3C/svg%3E");
+
+        position: relative;
+        display: inline-block;
+        width: calc(var(--max) * (var(--size) + var(--gap)) - var(--gap));
+        height: var(--size);
+        background: var(--base);
+        -webkit-mask-image: var(--star);
+        mask-image: var(--star);
+        -webkit-mask-repeat: repeat-x;
+        mask-repeat: repeat-x;
+        -webkit-mask-size: calc(var(--size) + var(--gap)) var(--size);
+        mask-size: calc(var(--size) + var(--gap)) var(--size);
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+
+    .stars-mask::before{
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: calc((var(--rating) / var(--max)) * 100%);
+        background: var(--fill);
+    }
+    @media screen and (width < 640px){
+        .product-card--wrapper .product-card{
+        grid-template-rows: auto;
+        transition: max-height 0.3s ease-in-out ;
+        margin-top: 12px;
+        row-gap: 12px;
+        margin-bottom: 20px;
+    }
+    .product-card--wrapper[data-expanded="false"] .product-card:nth-child(n+5){
+        max-height: 0;
+        height: 0;
+        grid-template-rows: 0;
+        overflow: hidden;
+        visibility: hidden;
+        padding:0;
+        grid-gap: 0;
+        margin:0;
+    }
+    .product-card--wrapper[data-expanded="true"] .product-card:nth-child(n+5){
+        max-height: 1000px;
+        grid-template-rows: auto;
+        height: auto;
+        overflow: visible;
+        visibility: visible;
+        
+    }
+        
+    /* Expand Button Transition */
+    @starting-style {
+        .expand-button.open {
+            opacity: 0;
+        }
+    }
+    @ending-style {
+      
+        .expand-button.open {
+            opacity: 1;
+        }
+    }
+    }
+
+    /* Scrollbar */
+    @media screen and (width >= 640px){
+    
+        .product-card--wrapper::-webkit-scrollbar{
+        width:6px;
+        height:6px;
+        margin-left: 10px;
+        }
+
+        .product-card--wrapper::-webkit-scrollbar-thumb{
+        background:#000;
+        border-radius:100vh;
+        border:1px solid transparent;
+        background-clip:padding-box;
+        transition:border-width .2s ease;
+        }
+
+        .product-card--wrapper:hover::-webkit-scrollbar-thumb,
+        .product-card--wrapper:active::-webkit-scrollbar-thumb,
+        .product-card--wrapper:focus-within::-webkit-scrollbar-thumb{
+        border-width:0;
+        }
+        .product-card--wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .product-card--wrapper::-webkit-scrollbar-thumb:hover{
+        cursor:pointer;
+        }
+    }
+    .expand-button{
+        transition: all 0.2s ease-in-out;
+    }
+    .expand-button:hover{
+        border: 2px solid #000;
+        background-color: #fff;
+        color: #000;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    button{
+      font-family: var(--font-heading);
+
+    }
+    .platter-quick-add.added{
+        background-color: #5C7962;
+        color: #fff;
+        transition: all 0.2s ease-in-out;
+    }

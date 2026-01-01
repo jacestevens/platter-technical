@@ -1,0 +1,236 @@
+        {% comment %} Custom Styles {% endcomment %}
+        <style>
+            #collection-grid--{{ section.id }}{
+                --text-title-size:{{ section.settings.product_title_size | divided_by: 100}};
+                --text-description-size:{{ section.settings.product_description_size | divided_by: 100}};
+            }
+          #collection-grid--{{ section.id }}  .product-title{
+                font-size: clamp(var(--text-lg), calc(var(--text-lg) * var(--text-title-size)), 36px);
+            }
+           #collection-grid--{{ section.id }} .product-description{
+                font-size: clamp(var(--text-sm), calc(var(--text-sm) * var(--text-description-size)), 18px);
+            }
+        
+        </style>
+        
+        
+        <div id="collection-grid--{{ section.id }}" class="collections--container max-sm:px-6 max-sm:py-9 sm:py-[80px]  mx-auto overflow-hidden">
+            <div class="collections--wrapper sm:overflow-visible relative sm:px-10">
+                <h2 class="font-serif sm:pb-[38px] sm:text-[40px]  max-sm:text-center max-sm:pb-5 max-sm:text-3xl font-bold">Best Sellers</h2>
+            <div class="product-card--wrapper scroll-pl-10 scroll-pr-10 -ml-10 pl-10  w-screen snap-x mx-10 scroll-smooth sm:overflow-x-scroll sm:pr-10  grid sm:gap-x-6 sm:pb-12 sm:grid-flow-col max-sm:grid-cols-2 max-sm:gap-x-3  max-sm:grid-rows-auto  "
+                data-expanded="false" style="--expanded-height:0">
+                 {% for product in section.settings.collection.products limit: section.settings.product_to_show %}
+                    {% render 'platter-product-card', product: product %}
+                 {% endfor %}
+            </div>
+            <div class="expand-button--container sm:hidden w-full mt-5">
+                <button
+                    type="button" aria-expanded="false"
+                    class="expand-button mx-auto cursor-pointer p-4 border-2 border-black bg-black tracking-[var(--tracking-custom-wide)] text-white rounded-full w-full text-center">Show
+                    More</button>
+            </div>
+            </div>
+        </div>
+
+      {% schema %}
+{
+  "name": "Platter Collection Grid",
+  "class": "ui-test-collection-list",
+  "settings": [
+     {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection",
+     },
+     {
+        "type": "header",
+        "content": "Section Settings",
+     },
+     {
+        "type": "text",
+        "id": "section_title",
+        "label": "Section Title"
+     },
+     {
+        "type": "richtext",
+        "id": "section_description",
+        "label": "Section Description",
+        "default": "<p></p>"
+     },
+     {
+        "type": "header",
+        "content": "Product Grid Settings"
+     },
+     {
+        "type": "range",
+        "id": "product_to_show",
+        "min": 4,
+        "max": 16,
+        "step": 1,
+        "label": "Product to show",
+        "default": 10
+     },
+     {
+        "type": "select",
+        "id": "desktop_layout_type",
+        "label": "Desktop Layout Type",
+        "options": [
+            {
+            "value": "grid",
+            "label": "Grid Layout"
+            },
+            {
+            "value": "carousel",
+            "label": "Carousel Layout"
+            },
+            {
+            "value": "scroll",
+            "label": "Scroll Layout"
+            },   
+        ],
+        "default": "scroll",
+     },
+     {
+        "type": "select",
+        "id": "mobile_layout_type",
+        "label": "Mobile Layout Type",
+        "options": [
+            {
+            "value": "grid",
+            "label": "Grid Layout"
+            },
+            {
+            "value": "carousel",
+            "label": "Carousel Layout"
+            },
+            {
+            "value": "scroll",
+            "label": "Scroll Layout"
+            },   
+        ],
+        "default": "grid",
+     },
+     {
+        "type": "header",
+        "content": "Product Grid Item Settings",
+     },
+     {
+        "type": "checkbox",
+        "id": "enable_badges",
+        "label": "Enable Badges",
+        "default": true
+     },
+     {
+        "type": "text",
+        "id": "badge_text",
+        "label": "Badge Text",
+        "default": "Best Seller",
+        "info": "If Badges is enabled, this will be the text displayed on the badge"
+     },
+     {
+        "type": "checkbox",
+        "id": "enable_sales_badge",
+        "label": "Enable Sales Badge",
+        "default": false,
+        "info": "If enabled, discounts based on compare at price will be displayed"
+     },
+     {
+        "type": "select",
+        "id": "sale_badge_display_text",
+        "label": "Sales Badge Display Text",
+        "options": [
+            {
+            "value": "percentage",
+            "label": "Percentage"
+            },
+            {
+            "value": "amount",
+            "label": "Amount"
+            }
+        ],
+        "default": "percentage",
+        "info": "If Sales Badge is enabled, this will determine how the discount is displayed"
+     },
+     {
+        "type": "header",
+        "content": "Product Grid Image Settings",
+     },
+     {
+        "type": "checkbox",
+        "id": "enable_secondary_image",
+        "label": "Enable Secondary Image",
+        "default": true
+     },
+     {
+        "type": "select",
+        "id": "aspect_ratio",
+        "label": "Image Aspect Ratio",
+        "options": [
+            {
+            "value": "square",
+            "label": "Square"
+            },
+            {
+            "value": "landscape",
+            "label": "Landscape"
+            }
+        ],
+        "default": "square"
+     },
+     {
+        "type": "header",
+        "content": "Product Grid Text Settings"
+     },
+     {
+        "type": "range",
+        "id": "product_title_size",
+        "min": 100,
+        "max": 300,
+        "step": 10,
+        "unit": "%",
+        "label": "Product Title Size",
+        "default": 100
+     },
+     {
+        "type": "range",
+        "id": "product_description_size",
+        "min": 100,
+        "max": 200,
+        "step": 5,
+        "unit": "%",
+        "label": "Product Description Size",
+        "default": 100
+     },
+     {
+        "type": "checkbox",
+        "id": "enable_reviews",
+        "label": "Enable Reviews",
+        "default": true,
+        "info": "If enabled, reviews will be displayed"
+     },
+     {
+        "type": "checkbox",
+        "id": "enable_compare_price",
+        "label": "Enable Compare at Price",
+        "default": false,
+        "info": "If enabled, original price will be crossed out, and the sale price will be displayed"
+     },
+     {
+      "type": "checkbox",
+      "id": "enable_quick_add",
+      "label": "Enable Quick Add",
+      "default": false,
+      "info": "If enabled, quick add will be enabled"
+     }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "presets": [
+    {
+      "name": "Platter Collection Grid"
+    }
+  ]
+}
+{% endschema %}
+`

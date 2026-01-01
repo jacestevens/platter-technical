@@ -1,0 +1,110 @@
+{% liquid
+  assign product = product
+%}
+<div class="product-card snap-start sm:min-w-[350px] sm:grid-rows-1 sm:gap-y-2 sm:h-fit @container grid grid-rows-2 relative max-sm:h-full">
+  <div class="badges-container w-full flex justify-between absolute z-10 px-2 top-2 sm:text-sm max-sm:text-[8px] uppercase bold">
+    {% if section.settings.enable_badges %}
+      <span class="badge badge-best-seller py-1 border bg-white rounded-full px-2 font-heading font-medium">
+        {% if section.settings.badge_text != blank %}
+          {{- section.settings.badge_text -}}
+        {% else %}
+          {{ section.settings.collection.title }}
+        {% endif %}
+      </span>
+    {% endif %}
+    {% if product.price < product.compare_at_price and section.settings.enable_sales_badge %}
+      {%- capture discount_amount -%}{%- liquid
+        assign original_price = product.compare_at_price | divided_by: 100.0
+        assign sale_price = product.price | divided_by: 100.0
+        if section.settings.sale_badge_display_text == 'percentage'
+        echo sale_price | divided_by: original_price | minus: 1 | abs | times: 100 | floor | append: '%'
+        else
+        echo product.price | minus: product.compare_at_price | abs | money
+        endif
+        -%}
+      {%- endcapture %}
+
+<span class="badge badge-sale py-1 border border-black text-white rounded-full px-2 font-heading bg-[#5C7962] font-medium">Save {{ discount_amount }}</span>
+    {% endif %}
+  </div>
+  <div
+    class="product-image--wrapper relative pt-[100%]  w-full h-auto object-cover aspect-square rounded-[10px] overflow-hidden"
+  >
+    <picture class=" hover:cursor-pointer absolute h-full w-full aspect-square  absolute top-0 left-0 z-1">
+      <source
+        type="image/webp"
+        srcset="
+          {{ product.featured_image | image_url: width: 500 }} 500w,
+          {{ product.featured_image | image_url: width: 1000 }} 1000w,
+          {{ product.featured_image | image_url: width: 1500 }} 1500w
+        "
+        sizes="(min-width: 768px) 100vw, 0px"
+      >
+      <img
+        class="h-full w-full object-cover"
+        src="{{ product.featured_image | image_url: width: 1500 }}"
+        srcset=""
+        sizes="(min-width: 768px) 100vw, 0px"
+        alt="Outside Vibes T-Shirt Sunshine"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        width=""
+        height=""
+      >
+    </picture>
+    <picture class=" hover:cursor-pointer secondary-image h-full z-1 w-full  aspect-square  absolute top-0 left-0 z-2">
+      <source
+        type="image/webp"
+        srcset="
+          {{ product.media[1] | image_url: width: 500 }} 500w,
+          {{ product.media[1] | image_url: width: 1000 }} 1000w,
+          {{ product.media[1] | image_url: width: 1500 }} 1500w
+        "
+        sizes="(min-width: 768px) 100vw, 0px"
+      >
+      <img
+        class="h-full w-full object-cover"
+        src="{{ product.featured_image | image_url: width: 1000 }}"
+        srcset=""
+        sizes="(min-width: 768px) 100vw, 0px"
+        alt=""
+        loading="lazy"
+        fetchpriority="high"
+        decoding="async"
+        width=""
+        height=""
+      >
+    </picture>
+  </div>
+  <div class="product-content flex-1 h-full gap-2 flex flex-col">
+    <h4 class="product-title @max-sm:min-h-[50px] font-heading text-lg">{{ product.title }}</h4>
+    {% if section.settings.enable_reviews %}
+    <div class="ratings-wrapper ">
+      <span
+        class="stars-mask"
+        style="--rating:4.4; --max:5"
+        role="img"
+        aria-label="Rated 4.4 out of 5"
+      ></span>
+      <span class="text-xs text-[var(--color-subdued)] uppercase">1,234 Reviews</span>
+    </div>
+    {% endif %}
+    <div class="price">
+      {% if product.price < product.compare_at_price  and section.settings.enable_compare_price %}
+        <s>{{ product.compare_at_price_max | money }}</s> {{ product.price_max | money }}
+      {% else %}
+        <span>{{ product.price | money }}</span>
+      {% endif %}
+    </div>
+    {% if section.settings.enable_quick_add %}
+        <div class="add-to-cart">
+            <button type="button" data-product-atc="{{ product.selected_or_first_available_variant.id }}" class="hover:bg-white hover:text-black transition ease-in-out duration-300 py-3  platter-quick-add font-normal cursor-pointer text-heading border-2 border-black bg-black tracking-[var(--tracking-custom-wide)] leading-[1] text-white rounded-full w-full text-center">Add to Cart</button>
+        </div>
+        {% else %}
+            <div class="view-product">
+                <button class="hover:bg-white hover:text-black transition ease-in-out duration-300 view-product-button cursor-pointer p-2  font-normal text-heading border-2 border-black bg-black tracking-[var(--tracking-custom-wide)] text-white rounded-full w-full text-center">View Product</button>
+            </div>
+    {% endif %}
+  </div>
+</div>
